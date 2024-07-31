@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For LaThela</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+        h1, h2 {
+            color: #555;
+        }
+        input {
+            width: 100%;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #555;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 0.5rem;
+        }
+        button:hover {
+            background-color: #777;
+        }
+        #quote {
+            margin-top: 1rem;
+            font-style: italic;
+            color: #555;
+        }
+        #gallery {
+            margin-top: 1rem;
+        }
+        #gallery img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        #auth-attempts {
+            color: #ff0000;
+            font-weight: bold;
+        }
+        #logout {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, LaThela!</h1>
+        <div id="auth">
+            <h2>Authentication</h2>
+            <p>Please answer the following questions:</p>
+            <input type="text" id="song" placeholder="What song did I dedicate to you?">
+            <input type="text" id="birthday" placeholder="What's your birthday? (DD/MM)">
+            <input type="text" id="nickname" placeholder="What's my nickname for you?">
+            <button onclick="authenticate()">Submit</button>
+            <p id="auth-attempts"></p>
+        </div>
+        <div id="content" style="display: none;">
+            <p id="quote"></p>
+            <h2>Graduation Gallery</h2>
+            <div id="gallery">
+                <img id="current-photo" src="" alt="Graduation photo">
+                <div>
+                    <button onclick="changePhoto(-1)">Previous</button>
+                    <button onclick="changePhoto(1)">Next</button>
+                </div>
+            </div>
+            <button id="logout" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <script>
+        const quotes = [
+
+        "You light up my life in ways I never thought possible.",
+        "Every moment with you is a treasure.",
+        "You are my sunshine on a cloudy day.",
+        "Being with you feels like home.",
+        "Your smile is my favorite thing in the world.",
+        "With you, forever isn't long enough.",
+        "You are the reason for all my happiness.",
+        "You complete me.",
+        "You're my best friend and my confidant.",
+        "I can't imagine my life without you.",
+        "You make everything better just by being there.",
+        "Thank you for being you.",
+        "You have my heart, now and always.",
+        "I adore everything about you.",
+        "You are my dream come true.",
+        "You make me believe in miracles.",
+        "You are my forever and always.",
+        "Every day with you is a beautiful adventure.",
+        "I cherish every moment we spend together.",
+        "You are my everything.",
+        "I can't wait to spend more time with you.",
+        "You are my greatest blessing.",
+        "You make my heart race.",
+        "You are my soulmate.",
+        "You are my reason for living.",
+        "With you, I've found my perfect match.",
+        "You are my one and only.",
+        "You are my rock.",
+        "Thank you for being in my life.",
+        "You are my better half.",
+        "You are my heart and soul.",
+        "I am so lucky to have you in my life.",
+        "You are my greatest adventure.",
+        "You make my world a better place.",
+        "You are my everything and more.",
+        "You are my heart's desire.",
+        "You are my angel.",
+        "You make my heart sing.",
+        "You are my sunshine.",
+        "You are my reason for being.",
+        "You are my happily ever after.",
+        "You are my world.",
+        "You are my everything and so much more.",
+        "You are my one true confidant.",
+        "You are my everything I ever wanted.",
+        "You are my heart's treasure.",
+        "You are my everything and beyond.",
+        "You are my everything I ever dreamed of.",
+        "You are my heart's joy.",
+        "You are my everything and my all in all.",
+        "You are my heart's desire and delight.",
+        "You are my one and only everything.",
+        "You are my heart's treasure and joy.",
+        "You are my everything and my heart's delight.",
+        "You are my heart's song and joy.",
+        "You are my heart's greatest confidant.",
+        "You are my everything and my all.",
+        "You are my heart's delight.",
+        "You are my everything I ever dreamed of.",
+        "You are my heart's joy.",
+        "You are my everything and my all in all.",
+        "You are my heart's desire and delight.",
+        "You are my one and only everything.",
+        "You are my heart's treasure and joy.",
+        "You are my everything and my heart's delight.",
+        "You are my heart's song and joy.",
+        "You are my heart's greatest confidant.",
+        "You are my everything and my all in all.",
+        "You are my heart's desire and joy.",
+        "You are my one and only everything.",
+        "You are my heart's treasure and delight.",
+        "You are my everything and my heart's song.",
+        "You are my heart's delight and joy.",
+        "You are my heart's greatest confidant.",
+        "You are my everything and my all in all.",
+        "You are my heart's desire and joy.",
+        "You are my one and only everything.",
+        "You are my heart's treasure and delight.",
+        "You are my everything and my heart's song.",
+        "You are my heart's delight and joy.",
+        "You are my heart's greatest confidant.",
+        "You are my everything and my all in all.",
+        "You are my heart's desire and joy.",
+        "You are my one and only everything.",
+        "You are my heart's treasure and delight.",
+        "You are my everything and my heart's song."
+
+        ];
+
+        const photos = [
+            "https://lh3.googleusercontent.com/pw/AP1GczPc-91sA00EfkDPemUINvV_utEOEEzP3Hx-6WaQCU2ZcSQyJegDgSnpAnb91O93aKQMs0TfL2ubyeuXF45_6DsUwusXk9OaZ-RdMPkf2d28UmoIPXA=w2400",
+            "https://lh3.googleusercontent.com/pw/AP1GczM1hBtBPkuHSZbmb8gMrRflR-_GDGPuSb_y3-9Igwu9E3c8nlX9M9kZsIzq4HtUIpUmDevmZRoSkpS12MPoVA35ZiOWvyDTmPULh493UWzRoBfYDlU=w2400",
+            "https://lh3.googleusercontent.com/pw/AP1GczMijXY1YezURU8XqeTodLXKcmZHibduQD0qc8mVt-J1M1EjOMc9ju3QLrkBs8sdBL0NdB_RT94enyzT6UvGcp4wCHJHWcmXjtXafgduGabgy3EiltU=w2400",
+            "https://lh3.googleusercontent.com/pw/AP1GczNOLCc1DCBFzRng_UdNKaOnhhz3jqBv2CkgDy4zxZhFuTdZC0elC0d1MhOLxhtkzYiQRT6I--F8iryE1ilvhwMtyakXxELGfzOJkg2Hy7vLLGlLjkg=w2400",
+        ];
+
+        let authAttempts = 3;
+        let currentPhotoIndex = 0;
+        let quoteInterval;
+
+        function authenticate() {
+            const song = document.getElementById('song').value.toLowerCase();
+            const birthday = document.getElementById('birthday').value;
+            const nickname = document.getElementById('nickname').value.toLowerCase();
+            
+            if (song === "hold" && birthday === "04/07" && nickname === "butternut") {
+                document.getElementById('auth').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+                document.getElementById('logout').style.display = 'inline-block';
+                showRandomQuote();
+                quoteInterval = setInterval(showRandomQuote, 10000); // Change quote every 10 seconds
+                updatePhoto();
+            } else {
+                authAttempts--;
+                if (authAttempts > 0) {
+                    document.getElementById('auth-attempts').textContent = `Incorrect. ${authAttempts} attempts remaining.`;
+                } else {
+                    document.getElementById('auth-attempts').textContent = "No more attempts. Please try again later.";
+                    document.querySelector('#auth button').disabled = true;
+                }
+            }
+        }
+
+        function showRandomQuote() {
+            const quoteElement = document.getElementById('quote');
+            const randomIndex = Math.floor(Math.random() * quotes.length);
+            quoteElement.textContent = quotes[randomIndex];
+        }
+
+        function updatePhoto() {
+            const img = document.getElementById('current-photo');
+            img.src = photos[currentPhotoIndex];
+            img.alt = `Graduation photo ${currentPhotoIndex + 1}`;
+        }
+
+        function changePhoto(direction) {
+            currentPhotoIndex += direction;
+            if (currentPhotoIndex < 0) currentPhotoIndex = photos.length - 1;
+            if (currentPhotoIndex >= photos.length) currentPhotoIndex = 0;
+            updatePhoto();
+        }
+
+        function logout() {
+            document.getElementById('auth').style.display = 'block';
+            document.getElementById('content').style.display = 'none';
+            document.getElementById('logout').style.display = 'none';
+            document.getElementById('song').value = '';
+            document.getElementById('birthday').value = '';
+            document.getElementById('nickname').value = '';
+            authAttempts = 3;
+            document.getElementById('auth-attempts').textContent = '';
+            document.querySelector('#auth button').disabled = false;
+            clearInterval(quoteInterval); // Stop the quote changing interval
+        }
+    </script>
+</body>
+</html>
